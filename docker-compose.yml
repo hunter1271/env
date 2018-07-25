@@ -1,0 +1,9 @@
+version: "3"
+services:
+  php:
+    image: env/php:latest
+    ports:
+      - 8080:80
+    volumes:
+      - /home/hunter/projects/platform-application:/var/www/html/application
+
