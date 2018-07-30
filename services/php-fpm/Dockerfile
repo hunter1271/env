@@ -1,7 +1,14 @@
 FROM ubuntu:bionic
 
+ARG UNAME=appuser
+ARG UID=1000
+ARG GID=1000
+
 ARG PHP_VERSION="7.1"
 ARG BLACKFIRE_VERSION="1.10.0"
+
+RUN groupadd -g $GID $UNAME
+RUN useradd -m -u $UID -g $GID -s /bin/bash $UNAME
 
 RUN export DEBIAN_FRONTEND=noninteractive \
     && export LC_ALL='en_US.UTF-8' \
@@ -26,7 +33,7 @@ RUN export DEBIAN_FRONTEND=noninteractive \
     && wget -O - https://packagecloud.io/gpg.key | apt-key add - \
     && echo "deb http://packages.blackfire.io/debian any main" > /etc/apt/sources.list.d/blackfire.list \
     && add-apt-repository -y ppa:ondrej/php && apt-get -qq update \
-    && apt-get -qqy install --no-install-recommends \
+    && apt-get -qqy install --no-install-recommends --fix-missing \
       php${PHP_VERSION}-fpm \
       php${PHP_VERSION}-cli \
       php${PHP_VERSION}-common \
@@ -50,9 +57,9 @@ RUN export DEBIAN_FRONTEND=noninteractive \
     && wget -O /usr/local/bin/blackfire https://packages.blackfire.io/binaries/blackfire-agent/${BLACKFIRE_VERSION}/blackfire-cli-linux_static_amd64 \
     && chmod +x /usr/local/bin/blackfire \
     && apt-get -qy autoremove --purge software-properties-common \
-    && apt-get autoclean \
-    # install composer
-    && curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer
+    && apt-get autoclean
+
+RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer
 
 RUN ln -sf /usr/sbin/php-fpm${PHP_VERSION} /usr/local/bin/php-fpm
 RUN ln -sf /etc/php/${PHP_VERSION} /etc/php/current
@@ -63,9 +70,9 @@ ENV OPCACHE_ENABLED="1"
 ENV XDEBUG_ENABLED="0"
 ENV NPM_CONFIG_PREFIX=/usr/local/etc/npm
 
-ENV NGINX_USER="www-data"
-ENV PHP_FPM_USER="www-data"
-ENV PHP_FPM_GROUP="www-data"
+ENV NGINX_USER={UNAME}
+ENV PHP_FPM_USER={UNAME}
+ENV PHP_FPM_GROUP={UNAME}
 
 COPY php/xdebug.ini    /etc/php/${PHP_VERSION}/mods-available/xdebug.ini
 COPY php/blackfire.ini /etc/php/${PHP_VERSION}/mods-available/blackfire.ini
@@ -87,7 +94,5 @@ COPY nginx/index.html /var/www/html/application/public/index.html
 
 # Expose Ports
 EXPOSE 80
-
-RUN usermod -u 1000 www-data && groupmod -g 1000 www-data
 
 CMD ["supervisord", "-n", "-c", "/etc/supervisord.conf"]

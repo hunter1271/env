@@ -5,5 +5,5 @@ services:
     ports:
       - 8080:80
     volumes:
-      - /home/hunter/projects/platform-application:/var/www/html/application
+      - /home/ural/project/platform-application:/var/www/html/application
 
