@@ -5,5 +5,17 @@ services:
     ports:
       - 8080:80
     volumes:
-      - /home/ural/project/platform-application:/var/www/html/application
+      - /home/hunter/projects/platform-application:/var/www/html/application
+    depends_on:
+      - database
+    links:
+      - database
+
+  database:
+    image: sameersbn/postgresql:9.6-4
+    environment:
+      PG_PASSWORD: 1234567
+      DB_NAME: bap_standart
+      DB_USER: bap_standart
+      DB_PASS: 123456
 
