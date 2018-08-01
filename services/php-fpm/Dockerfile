@@ -90,8 +90,6 @@ COPY nginx/symfony.conf /etc/nginx/conf.d/default.conf
 VOLUME ["/var/www/html/application"]
 WORKDIR "/var/www/html/application"
 
-COPY nginx/index.html /var/www/html/application/public/index.html
-
 # Expose Ports
 EXPOSE 80
 

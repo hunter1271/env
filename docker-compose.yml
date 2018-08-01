@@ -4,6 +4,7 @@ services:
     image: env/php:latest
     ports:
       - 8080:80
+      - 9091:9091
     volumes:
       - /home/hunter/projects/platform-application:/var/www/html/application
     depends_on:
