@@ -1,12 +1,13 @@
 version: "3"
 services:
   php:
-    image: env/php:latest
+    image: hunter1271/server:latest
     ports:
-      - 8080:80
+#      - 8080:80
       - 9091:9091
-    volumes:
-      - /home/hunter/projects/platform-application:/var/www/html/application
+#    volumes:
+#      - /home/hunter/projects/amal/app:/var/www/html/application
+#      - /home/hunter/projects/amal/env/services/php-fpm/supervisor/supervisord.conf:/etc/supervisord.conf
     depends_on:
       - database
     links:
@@ -16,7 +17,7 @@ services:
     image: sameersbn/postgresql:9.6-4
     environment:
       PG_PASSWORD: 1234567
-      DB_NAME: bap_standart
-      DB_USER: bap_standart
+      DB_NAME: bap_amal
+      DB_USER: bap_amal
       DB_PASS: 123456
 
